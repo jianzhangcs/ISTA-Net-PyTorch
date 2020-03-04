@@ -95,7 +95,7 @@ Figure 1. Illustration of the proposed ISTA-Net framework.
     python Train_CS_ISTA_Net.py --cs_ratio 40 --layer_num 9
     ```
     
-    
+    **We found that the re-trained ISTA-Net models may get a bit higher performance than the results reported in our paper.** 
     
 2. run the following scripts to train ISTA-Net<sup>+</sup> models.
     
