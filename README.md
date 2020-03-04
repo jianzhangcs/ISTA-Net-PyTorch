@@ -29,7 +29,7 @@ Figure 1. Illustration of the proposed ISTA-Net framework.
 
 2. Run the following scripts to test ISTA-Net models.
 
-    **You can use scripts in file 'TEST_ISTA_Net_plus_scripts.sh' to produce results for our paper.**
+    **You can use scripts in file 'TEST_ISTA_Net_scripts.sh' to produce results for our paper.**
 
     ```bash
     # test scripts
