@@ -1,6 +1,6 @@
 # ISTA-Net: Interpretable Optimization-Inspired Deep Network for Image Compressive Sensing [PyTorch version]
 
-## including codes of CS for natrual image (CS-NI) and CS for magnetic resonance imaging (CS-MRI) 
+## including codes of CS for natural image (CS-NI) and CS for magnetic resonance imaging (CS-MRI) 
 
 This repository is for ISTA-Net and ISTA-Net<sup>+</sup> introduced in the following paper
 
