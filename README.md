@@ -1,8 +1,11 @@
 # ISTA-Net: Interpretable Optimization-Inspired Deep Network for Image Compressive Sensing [PyTorch version]
+
+## including codes of CS for natrual image (CS-NI) and CS for magnetic resonance imaging (CS-MRI) 
+
 This repository is for ISTA-Net and ISTA-Net<sup>+</sup> introduced in the following paper
 
 [Jian Zhang](http://jianzhang.tech/), [Bernard Ghanem
-](http://www.bernardghanem.com/), "ISTA-Net: Interpretable Optimization-Inspired Deep Network for Image Compressive Sensing", CVPR 2018, [[pdf]](https://ivul.kaust.edu.sa/Documents/Publications/2018/ISTA-Net%20Interpretable%20Optimization-Inspired%20Deep%20Network%20for%20Image.pdf)
+](http://www.bernardghanem.com/), "ISTA-Net: Interpretable Optimization-Inspired Deep Network for Image Compressive Sensing", CVPR 2018, [[pdf]](http://openaccess.thecvf.com/content_cvpr_2018/papers/Zhang_ISTA-Net_Interpretable_Optimization-Inspired_CVPR_2018_paper.pdf)
 
 The code is built on **PyTorch** and tested on Ubuntu 16.04/18.04 and Windows 10 environment (Python3.x, PyTorch>=0.4) with 1080Ti GPU.
 
@@ -16,14 +19,16 @@ Figure 1. Illustration of the proposed ISTA-Net framework.
 
 
 ## Contents
-1. [Test](#test)
-2. [Train](#train)
-3. [Results](#results)
-4. [Citation](#citation)
-5. [Acknowledgements](#acknowledgements)
+1. [Test-CS-NI](#test-cs-ni)
+2. [Train-CS-NI](#train-cs-ni)
+3. [Test-CS-MRI](#test-cs-mri)
+4. [Train-CS-MRI](#train-cs-mri)
+5. [Results](#results)
+6. [Citation](#citation)
+7. [Acknowledgements](#acknowledgements)
 
 
-## Test
+## Test-CS-NI
 ### Quick start
 1. All models for our paper have been put in './model'.
 
@@ -69,7 +74,7 @@ Figure 1. Illustration of the proposed ISTA-Net framework.
 
 
 
-## Train
+## Train-CS-NI
 ### Prepare training data  
 
 1. Trainding data (**Training_Data.mat** including 88912 image blocks) is in './data'. If not, please download it from [GoogleDrive](https://drive.google.com/file/d/14CKidNsC795vPfxFDXa1FH9QuNJKE3cp/view?usp=sharing) or [BaiduPan [code: xy52]](https://pan.baidu.com/s/1X3pERjCD37YdqQuzKNXejA).
@@ -113,6 +118,56 @@ Figure 1. Illustration of the proposed ISTA-Net framework.
     python Train_CS_ISTA_Net_plus.py --cs_ratio 40 --layer_num 9
     ```
 
+
+
+## Test-CS-MRI
+### Quick start
+1. All models for our paper have been put in './model'.
+
+2. Run the following scripts to test ISTA-Net<sup>+</sup> models.
+
+    ```bash
+    # test scripts
+    python TEST_MRI_CS_ISTA_Net_plus.py --epoch_num 200 --cs_ratio 20 --layer_num 9
+    python TEST_MRI_CS_ISTA_Net_plus.py --epoch_num 200 --cs_ratio 30 --layer_num 9
+    python TEST_MRI_CS_ISTA_Net_plus.py --epoch_num 200 --cs_ratio 40 --layer_num 9
+    python TEST_MRI_CS_ISTA_Net_plus.py --epoch_num 200 --cs_ratio 50 --layer_num 9
+    ```
+
+### The whole test pipeline
+1. Prepare test data.
+
+    The original test BrainImages_test is in './data'
+
+2. Run the test scripts. 
+
+    See **Quick start**
+3. Check the results in './result'.
+
+
+
+## Train-CS-MRI
+
+### Prepare training data  
+
+1. Trainding data (**Training_BrainImages_256x256_100.mat** including 88912 image blocks) is in './data'. If not, please download it from [GoogleDrive](https://drive.google.com/file/d/1Gh2pKtVosXmGyv26rERihU27f9UKjcmz/view?usp=sharing).
+
+2. Place **Training_BrainImages_256x256_100.mat** in './data' directory
+
+### Begin to train
+
+
+1. run the following scripts to train ISTA-Net<sup>+</sup> models.
+    
+    **You can use scripts in file 'Train_ISTA_Net_plus_scripts.sh' to train models for our paper.** 
+
+    ```bash
+    # train scripts
+    python Train_MRI_CS_ISTA_Net_plus.py --cs_ratio 20 --layer_num 9
+    python Train_MRI_CS_ISTA_Net_plus.py --cs_ratio 30 --layer_num 9
+    python Train_MRI_CS_ISTA_Net_plus.py --cs_ratio 40 --layer_num 9
+    python Train_MRI_CS_ISTA_Net_plus.py --cs_ratio 50 --layer_num 9
+    ```
 
 ## Results
 ### Quantitative Results
