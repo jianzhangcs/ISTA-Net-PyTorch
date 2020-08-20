@@ -5,7 +5,7 @@
 This repository is for ISTA-Net and ISTA-Net<sup>+</sup> introduced in the following paper
 
 [Jian Zhang](http://jianzhang.tech/), [Bernard Ghanem
-](http://www.bernardghanem.com/), "ISTA-Net: Interpretable Optimization-Inspired Deep Network for Image Compressive Sensing", CVPR 2018, [[pdf]](http://openaccess.thecvf.com/content_cvpr_2018/papers/Zhang_ISTA-Net_Interpretable_Optimization-Inspired_CVPR_2018_paper.pdf) [[Supp]](https://jianzhang.tech/papers/Proof_ISTANet.pdf)
+](http://www.bernardghanem.com/), "ISTA-Net: Interpretable Optimization-Inspired Deep Network for Image Compressive Sensing", CVPR 2018, [[pdf]](http://openaccess.thecvf.com/content_cvpr_2018/papers/Zhang_ISTA-Net_Interpretable_Optimization-Inspired_CVPR_2018_paper.pdf) [[Supp]](https://jianzhang.tech/papers/CVPR_Supplementary.pdf)
 
 The code is built on **PyTorch** and tested on Ubuntu 16.04/18.04 and Windows 10 environment (Python3.x, PyTorch>=0.4) with 1080Ti GPU.
 
