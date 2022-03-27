@@ -11,7 +11,10 @@ import math
 from torch.nn import init
 import copy
 import cv2
-from skimage.measure import compare_ssim as ssim
+try:
+    from skimage.metrics import structural_similarity as ssim
+except ImportError:
+    from skimage.measure import compare_ssim as ssim
 from argparse import ArgumentParser
 
 parser = ArgumentParser(description='ISTA-Net')
