@@ -12,7 +12,7 @@ from argparse import ArgumentParser
 parser = ArgumentParser(description='ISTA-Net-plus')
 
 parser.add_argument('--start_epoch', type=int, default=0, help='epoch number of start training')
-parser.add_argument('--end_epoch', type=int, default=200, help='epoch number of end training')
+parser.add_argument('--end_epoch', type=int, default=400, help='epoch number of end training')
 parser.add_argument('--layer_num', type=int, default=9, help='phase number of ISTA-Net-plus')
 parser.add_argument('--learning_rate', type=float, default=1e-4, help='learning rate')
 parser.add_argument('--group_num', type=int, default=1, help='group number for training')
