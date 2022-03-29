@@ -28,7 +28,7 @@ parser.add_argument('--model_dir', type=str, default='model', help='trained or p
 parser.add_argument('--data_dir', type=str, default='data', help='training or test data directory')
 parser.add_argument('--log_dir', type=str, default='log', help='log directory')
 parser.add_argument('--result_dir', type=str, default='result', help='result directory')
-parser.add_argument('--test_name', type=str, default='Brainimages_test', help='name of test set')
+parser.add_argument('--test_name', type=str, default='BrainImages_test', help='name of test set')
 
 args = parser.parse_args()
 
