@@ -46,6 +46,15 @@ gpu_list = args.gpu_list
 test_name = args.test_name
 
 
+try:
+    # The flag below controls whether to allow TF32 on matmul. This flag defaults to True.
+    torch.backends.cuda.matmul.allow_tf32 = False
+    # The flag below controls whether to allow TF32 on cuDNN. This flag defaults to True.
+    torch.backends.cudnn.allow_tf32 = False
+except:
+    pass
+
+
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"] = gpu_list
 
