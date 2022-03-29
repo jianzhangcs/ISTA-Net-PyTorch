@@ -8,6 +8,7 @@ import os
 from torch.utils.data import Dataset, DataLoader
 import platform
 from argparse import ArgumentParser
+import types
 
 parser = ArgumentParser(description='ISTA-Net-plus')
 
