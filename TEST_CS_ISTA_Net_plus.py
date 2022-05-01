@@ -11,7 +11,10 @@ import math
 from torch.nn import init
 import copy
 import cv2
-from skimage.measure import compare_ssim as ssim
+try:
+    from skimage.metrics import structural_similarity as ssim
+except ImportError:
+    from skimage.measure import compare_ssim as ssim
 from argparse import ArgumentParser
 
 parser = ArgumentParser(description='ISTA-Net-plus')
@@ -40,6 +43,15 @@ group_num = args.group_num
 cs_ratio = args.cs_ratio
 gpu_list = args.gpu_list
 test_name = args.test_name
+
+
+try:
+    # The flag below controls whether to allow TF32 on matmul. This flag defaults to True.
+    torch.backends.cuda.matmul.allow_tf32 = False
+    # The flag below controls whether to allow TF32 on cuDNN. This flag defaults to True.
+    torch.backends.cudnn.allow_tf32 = False
+except:
+    pass
 
 
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"

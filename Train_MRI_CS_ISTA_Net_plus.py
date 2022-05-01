@@ -8,11 +8,12 @@ import os
 from torch.utils.data import Dataset, DataLoader
 import platform
 from argparse import ArgumentParser
+import types
 
 parser = ArgumentParser(description='ISTA-Net-plus')
 
 parser.add_argument('--start_epoch', type=int, default=0, help='epoch number of start training')
-parser.add_argument('--end_epoch', type=int, default=200, help='epoch number of end training')
+parser.add_argument('--end_epoch', type=int, default=400, help='epoch number of end training')
 parser.add_argument('--layer_num', type=int, default=9, help='phase number of ISTA-Net-plus')
 parser.add_argument('--learning_rate', type=float, default=1e-4, help='learning rate')
 parser.add_argument('--group_num', type=int, default=1, help='group number for training')
@@ -34,6 +35,15 @@ layer_num = args.layer_num
 group_num = args.group_num
 cs_ratio = args.cs_ratio
 gpu_list = args.gpu_list
+
+
+try:
+    # The flag below controls whether to allow TF32 on matmul. This flag defaults to True.
+    torch.backends.cuda.matmul.allow_tf32 = False
+    # The flag below controls whether to allow TF32 on cuDNN. This flag defaults to True.
+    torch.backends.cudnn.allow_tf32 = False
+except:
+    pass
 
 
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
@@ -62,23 +72,35 @@ Training_data = sio.loadmat('./%s/%s' % (args.data_dir, Training_data_Name))
 Training_labels = Training_data['labels']
 
 
-class FFT_Mask_ForBack(torch.nn.Module):
-    def __init__(self):
-        super(FFT_Mask_ForBack, self).__init__()
+if isinstance(torch.fft, types.ModuleType):
+    class FFT_Mask_ForBack(torch.nn.Module):
+        def __init__(self):
+            super(FFT_Mask_ForBack, self).__init__()
 
-    def forward(self, x, mask):
-        x_dim_0 = x.shape[0]
-        x_dim_1 = x.shape[1]
-        x_dim_2 = x.shape[2]
-        x_dim_3 = x.shape[3]
-        x = x.view(-1, x_dim_2, x_dim_3, 1)
-        y = torch.zeros_like(x)
-        z = torch.cat([x, y], 3)
-        fftz = torch.fft(z, 2)
-        z_hat = torch.ifft(fftz * mask, 2)
-        x = z_hat[:, :, :, 0:1]
-        x = x.view(x_dim_0, x_dim_1, x_dim_2, x_dim_3)
-        return x
+        def forward(self, x, full_mask):
+            full_mask = full_mask[..., 0]
+            x_in_k_space = torch.fft.fft2(x)
+            masked_x_in_k_space = x_in_k_space * full_mask.view(1, 1, *(full_mask.shape))
+            masked_x = torch.real(torch.fft.ifft2(masked_x_in_k_space))
+            return masked_x
+else:
+    class FFT_Mask_ForBack(torch.nn.Module):
+        def __init__(self):
+            super(FFT_Mask_ForBack, self).__init__()
+
+        def forward(self, x, mask):
+            x_dim_0 = x.shape[0]
+            x_dim_1 = x.shape[1]
+            x_dim_2 = x.shape[2]
+            x_dim_3 = x.shape[3]
+            x = x.view(-1, x_dim_2, x_dim_3, 1)
+            y = torch.zeros_like(x)
+            z = torch.cat([x, y], 3)
+            fftz = torch.fft(z, 2)
+            z_hat = torch.ifft(fftz * mask, 2)
+            x = z_hat[:, :, :, 0:1]
+            x = x.view(x_dim_0, x_dim_1, x_dim_2, x_dim_3)
+            return x
 
 
 # Define ISTA-Net-plus Block

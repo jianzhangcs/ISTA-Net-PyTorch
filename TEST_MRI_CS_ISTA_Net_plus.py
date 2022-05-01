@@ -11,8 +11,12 @@ import math
 from torch.nn import init
 import copy
 import cv2
-from skimage.measure import compare_ssim as ssim
+try:
+    from skimage.metrics import structural_similarity as ssim
+except ImportError:
+    from skimage.measure import compare_ssim as ssim
 from argparse import ArgumentParser
+import types
 
 parser = ArgumentParser(description='ISTA-Net-plus')
 
@@ -28,7 +32,7 @@ parser.add_argument('--model_dir', type=str, default='model', help='trained or p
 parser.add_argument('--data_dir', type=str, default='data', help='training or test data directory')
 parser.add_argument('--log_dir', type=str, default='log', help='log directory')
 parser.add_argument('--result_dir', type=str, default='result', help='result directory')
-parser.add_argument('--test_name', type=str, default='Brainimages_test', help='name of test set')
+parser.add_argument('--test_name', type=str, default='BrainImages_test', help='name of test set')
 
 args = parser.parse_args()
 
@@ -40,6 +44,15 @@ group_num = args.group_num
 cs_ratio = args.cs_ratio
 gpu_list = args.gpu_list
 test_name = args.test_name
+
+
+try:
+    # The flag below controls whether to allow TF32 on matmul. This flag defaults to True.
+    torch.backends.cuda.matmul.allow_tf32 = False
+    # The flag below controls whether to allow TF32 on cuDNN. This flag defaults to True.
+    torch.backends.cudnn.allow_tf32 = False
+except:
+    pass
 
 
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
@@ -66,23 +79,35 @@ Training_data = sio.loadmat('./%s/%s' % (args.data_dir, Training_data_Name))
 Training_labels = Training_data['labels']
 
 
-class FFT_Mask_ForBack(torch.nn.Module):
-    def __init__(self):
-        super(FFT_Mask_ForBack, self).__init__()
+if isinstance(torch.fft, types.ModuleType):
+    class FFT_Mask_ForBack(torch.nn.Module):
+        def __init__(self):
+            super(FFT_Mask_ForBack, self).__init__()
 
-    def forward(self, x, mask):
-        x_dim_0 = x.shape[0]
-        x_dim_1 = x.shape[1]
-        x_dim_2 = x.shape[2]
-        x_dim_3 = x.shape[3]
-        x = x.view(-1, x_dim_2, x_dim_3, 1)
-        y = torch.zeros_like(x)
-        z = torch.cat([x, y], 3)
-        fftz = torch.fft(z, 2)
-        z_hat = torch.ifft(fftz * mask, 2)
-        x = z_hat[:, :, :, 0:1]
-        x = x.view(x_dim_0, x_dim_1, x_dim_2, x_dim_3)
-        return x
+        def forward(self, x, full_mask):
+            full_mask = full_mask[..., 0]
+            x_in_k_space = torch.fft.fft2(x)
+            masked_x_in_k_space = x_in_k_space * full_mask.view(1, 1, *(full_mask.shape))
+            masked_x = torch.real(torch.fft.ifft2(masked_x_in_k_space))
+            return masked_x
+else:
+    class FFT_Mask_ForBack(torch.nn.Module):
+        def __init__(self):
+            super(FFT_Mask_ForBack, self).__init__()
+
+        def forward(self, x, mask):
+            x_dim_0 = x.shape[0]
+            x_dim_1 = x.shape[1]
+            x_dim_2 = x.shape[2]
+            x_dim_3 = x.shape[3]
+            x = x.view(-1, x_dim_2, x_dim_3, 1)
+            y = torch.zeros_like(x)
+            z = torch.cat([x, y], 3)
+            fftz = torch.fft(z, 2)
+            z_hat = torch.ifft(fftz * mask, 2)
+            x = z_hat[:, :, :, 0:1]
+            x = x.view(x_dim_0, x_dim_1, x_dim_2, x_dim_3)
+            return x
 
 
 # Define ISTA-Net-plus Block
